@@ -25,8 +25,8 @@ const createUser = async (req, res) => {
         .status(409)
         .json({ message: "Username or email already exists" });
     }
-    const user = await User.create({
-      username,
+
+    const user = new User({  username,
       email,
       password,
       gender,
@@ -36,6 +36,7 @@ const createUser = async (req, res) => {
           ? "/public/avatarmale.png"
           : "/public/avatarfemale.jpg"),
     });
+    await user.save();
     res.status(201).json({ message: "User created successfully", user });
   } catch (error) {
     console.error("Error creating user:", error.message);
@@ -43,6 +44,40 @@ const createUser = async (req, res) => {
   }
 };
 
+const loginUser = async (req,res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+        }
+    
+        const user = await User.findOne({ email });
+        if (!user) {
+        return res.status(404).json({ message: "User not found" });
+        }
+    
+        const isPasswordCorrect = await user.isPasswordCorrect(password);
+        if (!isPasswordCorrect) {
+        return res.status(401).json({ message: "Invalid password" });
+        }
+    
+        const accessToken = user.generateAccessToken();
+        if (!accessToken) {
+            return res.status(500).json({ message: "Failed to generate access token" });
+        }
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+        });
+
+        return res.status(200).json({ message: "Login successful", user });
+    } catch (error) {
+        console.error("Error logging in user:", error.message);
+        res.status(500).json({ message: "Internal server error from loginUser" });
+    }
+}
 
 
-export { createUser };
+
+export { createUser,loginUser };
