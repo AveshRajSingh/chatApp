@@ -7,6 +7,7 @@ import connectDB from './db/index.js';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 //database connection
@@ -17,10 +18,11 @@ connectDB().then(() => {
 });
 
 app.use(cors({
-  origin:['http://localhost:5173'],
+  origin:['http://localhost:5173/'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
+app.use(cookieParser()); // Middleware to parse cookies
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -28,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.send('Welcome to the Chat Application Backend');
 });
+
 
 app.use('/public', express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), 'public')));
 

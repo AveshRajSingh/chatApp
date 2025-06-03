@@ -77,7 +77,29 @@ const loginUser = async (req,res) => {
         res.status(500).json({ message: "Internal server error from loginUser" });
     }
 }
+const logoutUser = async (req, res) => {
+    try {
+        res.clearCookie("accessToken");
+        return res.status(200).json({ message: "Logout successful" });
+    } catch (error) {
+        console.error("Error logging out user:", error.message);
+        res.status(500).json({ message: "Internal server error from logoutUser" });
+    }
+}
+
+const checkAuth = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    res.status(200).json({ message: "User is authenticated", user });
+  } catch (error) {
+    console.error("Error checking authentication:", error.message);
+    res.status(500).json({ message: "Internal server error from checkAuth" });
+  }
+}
 
 
 
-export { createUser,loginUser };
+export { createUser,loginUser,logoutUser,checkAuth };
