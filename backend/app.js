@@ -17,10 +17,12 @@ connectDB().then(() => {
   console.error('Database connection failed:', error.message);
 });
 
+// Configure CORS with specific options instead of wildcard
 app.use(cors({
-  origin:['http://localhost:5173/'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true,
+  origin: 'http://localhost:5173', // Your frontend URL
+  credentials: true, // Allow credentials (cookies)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
 }));
 app.use(cookieParser()); // Middleware to parse cookies
 
