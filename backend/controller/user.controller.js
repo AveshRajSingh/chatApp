@@ -64,11 +64,10 @@ const loginUser = async (req,res) => {
         const accessToken = user.generateAccessToken();
         if (!accessToken) {
             return res.status(500).json({ message: "Failed to generate access token" });
-        }
-        res.cookie("accessToken", accessToken, {
+        }        res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            secure: true, // Required for SameSite=None
+            sameSite: "none", // Allow cross-site cookie access
         });
 
         return res.status(200).json({ message: "Login successful", user });

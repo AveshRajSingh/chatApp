@@ -3,19 +3,24 @@ import useAuthStore from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 
 const SidebarForUsers = () => {
-  const { onlineUsers, fetchOnlineUsers, authUser } = useAuthStore();
+const onlineUsers = useAuthStore((state) => state.onlineUsers);
+const fetchOnlineUsers = useAuthStore((state) => state.fetchOnlineUsers);
+const authUser = useAuthStore((state) => state.authUser);
+
+  console.log("authUser from SidebarForUsers", authUser);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if(authUser) return;
     const getUsers = async () => {
       setLoading(true);
       await fetchOnlineUsers();
       setLoading(false);
     };
     getUsers();
-  }, [fetchOnlineUsers]);
+  }, [authUser]);
 
   const filteredUsers = onlineUsers.filter((user) =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -26,7 +31,7 @@ const SidebarForUsers = () => {
   };
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
+    <div className="bg-white shadow rounded-lg overflow-hidden w-[30%] max-h-[90%] min-h-[90%] overflow-y-scroll">
       {/* Search Bar */}
       <div className="p-4 border-b border-gray-200">
         <div className="relative">
