@@ -8,6 +8,7 @@ const useAuthStore = create((set) => ({
   isSigningUp: false,
   isLoggingIn: false,
   isCheckingAuth: true,
+  isLoading: false,
   onlineUsers: [],
   socket: null,
 
@@ -59,6 +60,24 @@ const useAuthStore = create((set) => ({
     } catch (error) {
       console.error("Logout error:", error);
       toast.error(error.response?.data?.message || "Logout failed");
+    }
+  },
+  fetchOnlineUsers : async () => {
+    set({ isLoading: true });
+    try {
+      const response = await axiosInstance.get("/user/getUsersForSidebar");
+      if (response.status === 200) {
+        set({ onlineUsers: response.data.users });
+      } else {
+        set({ onlineUsers: [] });
+      }
+    } catch (error) {
+      console.error("Error fetching online users:", error);
+      toast.error("Failed to fetch online users");
+      // Reset online users in case of error
+      set({ onlineUsers: [] });
+    } finally {
+      set({ isLoading: false });
     }
   },
 

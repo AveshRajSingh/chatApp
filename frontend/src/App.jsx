@@ -6,9 +6,13 @@ import SignupPage from "./pages/SignupPage";
 import ProfilePage from "./pages/ProfilePage";
 import {ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import useAuthStore from "./store/useAuthStore.js";
+import Chat from "./components/Chat.jsx";
+import SidebarForUsers from "./components/SidebarForUsers.jsx";
 
 
 function App() {
+  const { authUser } = useAuthStore();
   return (
     <BrowserRouter>
       <ToastContainer 
@@ -23,12 +27,14 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      <Navbar />
+      { authUser && <Navbar />}
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/chat" element={<Chat />}/>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/sidebar" element={<SidebarForUsers />} />
       </Routes>
     </BrowserRouter>
   );
